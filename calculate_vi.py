@@ -71,7 +71,7 @@ def create_output_file(name, num_bands, dataset):
 def calculate_NDVI():
     # fetch bands from input
     red_band = band_by_frequency[669]
-    red = src_ds.GetRasterBand(red_band).ReadAsArray().astype(np.float)
+    red = src_ds.GetRasterBand(red_band).ReadAsArray()
     nir_band = band_by_frequency[860]
     nir = src_ds.GetRasterBand(nir_band).ReadAsArray()
 
