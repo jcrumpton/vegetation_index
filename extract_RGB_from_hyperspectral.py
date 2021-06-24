@@ -89,12 +89,12 @@ if __name__ == "__main__":
     
     # input_filename = "./HSI_data/2B_FL12.dat"
     
-    parser = argparse.ArgumentParser(description='Create RGB geotiff from a hyperspectral geotif')
+    parser = argparse.ArgumentParser(description='Create RGB geotiff from a hyperspectral input file')
 
     parser.add_argument('input_filename',
                         metavar='input_filename',
                         type=str,
-                        help='the hyperspectral geotif file to use as input')
+                        help='the hyperspectral file to use as input')
 
     args = parser.parse_args()
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     try:
         src_ds = gdal.Open(input_filename)
     except RuntimeError as e:
-        print ('Unable to open input tif')
+        print ('Unable to open input file')
         print (e)
         sys.exit(1)
 

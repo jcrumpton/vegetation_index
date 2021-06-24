@@ -9,12 +9,12 @@ if __name__ == "__main__":
     
     no_extensions = True
 
-    # parser = argparse.ArgumentParser(description='Create RGB geotiff from a hyperspectral geotif')
+    # parser = argparse.ArgumentParser(description='Create RGB geotiff from a hyperspectral input file')
 
     # parser.add_argument('input_filename',
     #                     metavar='input_filename',
     #                     type=str,
-    #                     help='the hyperspectral geotif file to use as input')
+    #                     help='the hyperspectral file to use as input')
 
     # args = parser.parse_args()
 
