@@ -41,7 +41,7 @@ if __name__ == "__main__":
     for freq in [660, 550, 480]:
         closest_freq = gri_util.closest_wavelength(hdr_dictionary, freq)
         band = gri_util.band_for_wavelength(hdr_dictionary, closest_freq)
-        color_band, metadata = gri_util.extract_band(band, src_ds, nodata_value=nodata_value)
+        color_band, metadata = gri_util.extract_band(band, src_ds)
     
         # write calculated band
         out_band = out_ds.GetRasterBand(output_band_number)
@@ -50,7 +50,8 @@ if __name__ == "__main__":
         out_band.SetDescription(descrip_string)
         
         if nodata_value:
-             out_band.SetNoDataValue(nodata_value)
+            color_band = color_band.filled(nodata_value)
+            out_band.SetNoDataValue(nodata_value)
     
         out_band.WriteArray(color_band)
         out_band.ComputeStatistics(False)

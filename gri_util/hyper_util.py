@@ -82,7 +82,7 @@ def band_for_wavelength(header_dictionary, wavelength):
     return (header_dictionary["wavelength_dict"])[wavelength]
 
 
-def extract_band(band, dataset, nodata_value=-99):
+def extract_band(band, dataset):
     """ 
     fetch the named band from the hyperspectral file
     band: integer
@@ -96,8 +96,7 @@ def extract_band(band, dataset, nodata_value=-99):
 
     data = raster_band.ReadAsArray()
     data = np.ma.masked_values(data, 0.0)
-    data = data.filled(nodata_value)
-    
+        
     return data, new_metadata
 
     
