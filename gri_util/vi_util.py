@@ -8,7 +8,7 @@ nodata_value = None
 #   1) add acronym to VALID_INDICES
 #   2) write a compute_<acronym> method
 #
-VALID_INDICES = ['ARI','mARI','NDVI', 'gNDVI']
+VALID_INDICES = ['ARI','mARI','NDVI', 'gNDVI', 'NDVI673', 'NPCI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -46,6 +46,40 @@ def calculate_gNDVI(source_dataset, hdr_dictionary):
     return gNDVI
 
 
+def calculate_NDVI673(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R673 = data_for_wavelength(source_dataset, hdr_dictionary, 673)
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R673 band, don't allow division by zero
+    R673 = np.ma.masked_where(R673 + R750 == 0, R673)
+
+    # Do the calculation.
+    NDVI673 = (R750 - R673) / (R750 + R673)
+
+    return NDVI673
+
+
+def calculate_NPCI(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 680)
+    R430 = data_for_wavelength(source_dataset, hdr_dictionary, 430)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R680 band, don't allow division by zero
+    R680 = np.ma.masked_where(R680 + R430 == 0, R680)
+
+    # Do the calculation.
+    NPCI = (R680 - R430) / (R680 + R430)
+
+    return NPCI
+
+
 def calculate_ARI(source_dataset, hdr_dictionary):
     
     R550 = data_for_wavelength(source_dataset, hdr_dictionary, 550)
@@ -79,4 +113,5 @@ def calculate_mARI(source_dataset, hdr_dictionary):
     mARI = R800 * ((1/R550) - (1/R700))
 
     return mARI
+
 
