@@ -8,7 +8,7 @@ nodata_value = None
 #   1) add acronym to VALID_INDICES
 #   2) write a compute_<acronym> method
 #
-VALID_INDICES = ['ARI','mARI','NDVI', 'gNDVI', 'NDVI673', 'NPCI']
+VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI673', 'NPCI', 'ARI', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -115,3 +115,17 @@ def calculate_mARI(source_dataset, hdr_dictionary):
     return mARI
 
 
+def calculate_SAVI(source_dataset, hdr_dictionary):
+
+    L = 0.5
+    
+    R670 = data_for_wavelength(source_dataset, hdr_dictionary, 670)
+    R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
+
+    global nodata_value
+    nodata_value = -10000
+
+    # Do the calculation.
+    SAVI = (1 + L) * ((R800 - R670) / (R800 + R670 + L))
+
+    return SAVI
