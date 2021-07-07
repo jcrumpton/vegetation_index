@@ -2,46 +2,18 @@ import numpy as np
 from osgeo import gdal
 import sys
 import argparse
-import os.path
+import gri_util
 
 gdal.UseExceptions()  # allow GDAL to throw Python Exceptions
 
 NO_DATA_VALUE = -10000
 
-
-def create_output_filename(input_filename, to_append):
-    """
-    create output filename by appending a type to the inputfilename
-    examples: 2B_FL2 + ndvi = 2B_FL2_ndvi.tif
-              ./RGB_data/200ft_BREN.tif + ndvi = ./RGB_data/200ft_BREN_ndvi.tif
-              
-    """
-    parts = os.path.splitext(input_filename)
-    new_filename = parts[0] + "_" + to_append + ".tif"
-    # print(new_filename)
-    
-    return new_filename
-
-def create_output_file(name, num_bands, dataset):
-    """ 
-    create output geotif with same extent as dataset
-    """
-    driver = gdal.GetDriverByName('GTiff')
-
-    output = driver.Create(
-        name, dataset.RasterXSize, dataset.RasterYSize, num_bands, gdal.GDT_Float32)
-    output.SetProjection(dataset.GetProjection())
-    output.SetGeoTransform(dataset.GetGeoTransform())
-   
-    return output
-
-
-def calculate_ndvi():
+def calculate_ndvi(source_dataset):
     # fetch bands from input: BGREN
     red_band = 3
-    red = src_ds.GetRasterBand(red_band).ReadAsArray().astype(np.float)
+    red = source_dataset.GetRasterBand(red_band).ReadAsArray().astype(np.float32)
     nir_band = 5
-    nir = src_ds.GetRasterBand(nir_band).ReadAsArray()
+    nir = source_dataset.GetRasterBand(nir_band).ReadAsArray()
 
     # Mask the red band 
     red = np.ma.masked_values(red, NO_DATA_VALUE)
@@ -58,33 +30,33 @@ def calculate_ndvi():
 
 if __name__ == "__main__":
     
-    input_filename = "./RGB_data/2021-05-21_USDA_NACA_200ft_BGREN.tif"
+    # input_filename = "K:/users/joec/06-01-2021/2021-06-01_USDA_NACA_400ft_BGREN.tif"
     
-    # parser = argparse.ArgumentParser(description='Calculate ndvi from a BGREN geotif')
+    parser = argparse.ArgumentParser(description='Calculate ndvi from a BGREN geotif')
 
-    # parser.add_argument('input_filename',
-    #                     metavar='input',
-    #                     type=str,
-    #                     help='the BGREN geotif file to use as input')
+    parser.add_argument('input_filename',
+                        metavar='input',
+                        type=str,
+                        help='the BGREN geotif file to use as input')
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
-    # input_filename = args.input_filename
+    input_filename = args.input_filename
     
-    output_filename = create_output_filename(input_filename, "ndvi")
+    output_filename = gri_util.create_output_filename(input_filename, "ndvi")
 
     try:
         src_ds = gdal.Open(input_filename)
     except RuntimeError as e:
-        print ('Unable to open input tif')
+        print ('Unable to open input file')
         print (e)
         sys.exit(1)
 
 
     # create new dataset with same extent as source dataset
-    out_ds = create_output_file(output_filename, 1, src_ds)
+    out_ds = gri_util.create_output_file(output_filename, 1, src_ds)
 
-    calculated_band = calculate_ndvi()
+    calculated_band = calculate_ndvi(src_ds)
 
     # write calculated band
     out_band = out_ds.GetRasterBand(1)
@@ -95,6 +67,5 @@ if __name__ == "__main__":
     out_band.ComputeStatistics(False)
 
     # write output file
-    del out_ds
-
+    out_ds = None
 
