@@ -30,7 +30,7 @@ if __name__ == "__main__":
     try:
         src_ds = gdal.Open(input_filename)
     except RuntimeError as e:
-        print ('Unable to open input tif')
+        print ('Unable to open input file')
         print (e)
         sys.exit(1)
 

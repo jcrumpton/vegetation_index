@@ -99,7 +99,13 @@ def extract_band(band, dataset):
         
     return data, new_metadata
 
-    
+
+def data_for_wavelength(source_dataset, hdr_dictionary, wavelength):
+    closest_freq = closest_wavelength(hdr_dictionary, wavelength)
+    band_number = band_for_wavelength(hdr_dictionary, closest_freq)
+    data, _ = extract_band(band_number, source_dataset)
+
+    return data
 
 
 # hdr_filename = hdr_filename_from_base_filename(r"K:\users\joec\06-01-2021\Deliverables_2B\FL1")

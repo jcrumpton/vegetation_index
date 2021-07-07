@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # input_pattern = "K:\\users\\joec\\10-30-2020\\HSI_Deliverables\\2B_FL*"
     # no_extensions = True
 
-    parser = argparse.ArgumentParser(description='Create RGB geotiff from a hyperspectral input file')
+    parser = argparse.ArgumentParser(description='Create RGB geotiff from hyperspectral input files')
 
     parser.add_argument('input_filename_pattern',
                         metavar='input_filename_pattern',

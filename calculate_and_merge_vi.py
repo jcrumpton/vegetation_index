@@ -3,17 +3,18 @@ import argparse
 import pathlib
 import glob
 import os
+import gri_util
 
+# path to gdal_merge.py in WinPython
+# C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils\
 PATH_TO_UTILS = r'C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils'
-
-VALID_INDICES = ['ARI','mARI','NDVI']
 
 if __name__ == "__main__":
     
     # input_filename_pattern = "K:\\users\\joec\\10-30-2020\\HSI_Deliverables\\2B_FL*"
     # vegetation_index = "NDVI"
 
-    parser = argparse.ArgumentParser(description='Create vegetation index geotiff from a hyperspectral input file')
+    parser = argparse.ArgumentParser(description='Create vegetation index geotiff from hyperspectral input files')
     
     parser.add_argument('input_filename_pattern',
                         metavar='input_filename_pattern',
@@ -28,9 +29,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     vegetation_index = args.vegetation_index
-    if vegetation_index not in VALID_INDICES:
+    if vegetation_index not in gri_util.VALID_INDICES:
         print(f'{vegetation_index} is not a valid index to calculate')
-        print(f'Choices are: {VALID_INDICES}')
+        print(f'Choices are: {gri_util.VALID_INDICES}')
         sys.exit(1)
 
     input_filename_pattern = args.input_filename_pattern
@@ -55,6 +56,10 @@ if __name__ == "__main__":
 
     files_string = " ".join(files_to_process)
     gdal_merge = pathlib.Path(PATH_TO_UTILS).joinpath('gdal_merge.py')
-    command=f"python {gdal_merge} -n -99 -a_nodata -99 -o merged_{vegetation_index}.tif -of gtiff -ot Float32 " + files_string
+    nodata_value = gri_util.retrieve_nodata_value(files_to_process[0])
+    if nodata_value:
+        command=f"python {gdal_merge} -n {nodata_value} -a_nodata {nodata_value} -o merged_{vegetation_index}.tif -of gtiff -ot Float32 " + files_string
+    else:
+        command=f"python {gdal_merge}  -o merged_{vegetation_index}.tif -of gtiff -ot Float32 " + files_string
     print(os.popen(command).read())
     
