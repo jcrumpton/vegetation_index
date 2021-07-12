@@ -25,6 +25,12 @@ if __name__ == "__main__":
                         metavar='vegetation_index',
                         type=str,
                         help='the vegetation index to calculate')
+
+    parser.add_argument('-o',
+                        metavar='output_filename',
+                        type=str,
+                        required=False,
+                        help='output filename')   
     
     args = parser.parse_args()
 
@@ -34,6 +40,11 @@ if __name__ == "__main__":
         print(f'Choices are: {gri_util.VALID_INDICES}')
         sys.exit(1)
 
+    output_filename = args.o
+    if output_filename is None:
+        output_filename = f"merged_{vegetation_index}.tif"
+    #print(f"output_filename: {output_filename}")
+    
     input_filename_pattern = args.input_filename_pattern
     files_to_process = glob.glob(input_filename_pattern)
     no_extensions = "".__eq__(pathlib.Path(input_filename_pattern).suffix)
@@ -58,8 +69,8 @@ if __name__ == "__main__":
     gdal_merge = pathlib.Path(PATH_TO_UTILS).joinpath('gdal_merge.py')
     nodata_value = gri_util.retrieve_nodata_value(files_to_process[0])
     if nodata_value:
-        command=f"python {gdal_merge} -n {nodata_value} -a_nodata {nodata_value} -o merged_{vegetation_index}.tif -of gtiff -ot Float32 " + files_string
+        command=f"python {gdal_merge} -n {nodata_value} -a_nodata {nodata_value} -o {output_filename} -of gtiff -ot Float32 " + files_string
     else:
-        command=f"python {gdal_merge}  -o merged_{vegetation_index}.tif -of gtiff -ot Float32 " + files_string
+        command=f"python {gdal_merge} -o {output_filename} -of gtiff -ot Float32 " + files_string
     print(os.popen(command).read())
     
