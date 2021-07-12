@@ -11,7 +11,7 @@ if __name__ == "__main__":
     
     # input_filename = "./HSI_data/2B_FL2.tif"
     
-    parser = argparse.ArgumentParser(description='Calculate ndvi from a hyperspectral input file')
+    parser = argparse.ArgumentParser(description='Calculate vegetation index from a hyperspectral input file')
 
     parser.add_argument('input_filename',
                         metavar='input_filename',
