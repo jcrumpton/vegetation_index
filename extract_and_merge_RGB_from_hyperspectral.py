@@ -5,7 +5,7 @@ import os
 
 # path to gdal_merge.py in WinPython
 # C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils\
-PATH_TO_UTILS = "C:\\Utilities\\WPy64-3890\\python-3.8.9.amd64\\Lib\\site-packages\\osgeo_utils\\" 
+PATH_TO_UTILS = r"C:\gri_dev\vegetation_index\venv\Lib\site-packages\osgeo_utils" 
 
 if __name__ == "__main__":
     
@@ -44,7 +44,8 @@ if __name__ == "__main__":
     # print(files_to_process)
 
     files_string = " ".join(files_to_process)
+    gdal_merge = pathlib.Path(PATH_TO_UTILS).joinpath('gdal_merge.py')
 
-    command=f"python {PATH_TO_UTILS}gdal_merge.py -o merged_RGB.tif -of gtiff " + files_string
+    command=f"python {gdal_merge} -o merged_RGB.tif -of gtiff " + files_string
     print(os.popen(command).read())
     
