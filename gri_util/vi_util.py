@@ -8,7 +8,7 @@ nodata_value = None
 #   1) add acronym to VALID_INDICES
 #   2) write a compute_<acronym> method
 #
-VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NPCI', 'mSR705', 'PSSRa', 'ARI', 'mARI', 'SAVI']
+VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NPCI', 'mSR705', 'PSSRa', 'SR445', 'ARI', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -130,6 +130,21 @@ def calculate_PSSRa(source_dataset, hdr_dictionary):
     PSSRa = R800 / R676
 
     return PSSRa
+
+
+def calculate_SR445(source_dataset, hdr_dictionary):
+    
+    R445 = data_for_wavelength(source_dataset, hdr_dictionary, 445)
+    R445 = np.ma.masked_values(R445, 0.0)
+
+    R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
+    
+    global nodata_value
+    nodata_value = -10000
+
+    SR445 = R800/R445
+
+    return SR445
 
 
 def calculate_ARI(source_dataset, hdr_dictionary):
