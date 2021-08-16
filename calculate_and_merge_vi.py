@@ -5,9 +5,9 @@ import glob
 import os
 import gri_util
 
-# path to gdal_merge.py in WinPython
-# C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils\
-PATH_TO_UTILS = r'C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils'
+# path to gdal_merge.py 
+# in WinPython: C:\Utilities\WPy64-3890\python-3.8.9.amd64\Lib\site-packages\osgeo_utils
+PATH_TO_UTILS = r"venv\Lib\site-packages\osgeo_utils"
 
 if __name__ == "__main__":
     
