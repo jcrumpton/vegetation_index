@@ -2,6 +2,9 @@
 
 Create vegetation index (NDVI, ARI, etc) geotiffs from hyperspectral images. Uses Python and GDAL.
 
+# Usage
+
+# Adding new indices
 
 # Installing GDAL
 
