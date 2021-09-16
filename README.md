@@ -17,9 +17,9 @@ where FL1 is the hyperspectral ENVI data file and ARI is the vegetation index to
 ### Multiple Input Files
 To calculate a vegetation index for several input files:
 ```
-python calculate_vi_and_merge.py K:\users\joec\06-01-2021\FL* ARI
+python calculate_and_merge_vi.py K:\users\joec\06-01-2021\FL* ARI
 ```
-This script uses `gdal_merge.py` to merge the separate output files. The path to `gdal_merge.py` is set within [calculate_vi_and_merge.py](calculate_vi_and_merge.py):
+This script uses `gdal_merge.py` to merge the separate output files. The path to `gdal_merge.py` is set within [calculate_and_merge_vi.py](calculate_and_merge_vi.py):
 ```
 PATH_TO_UTILS = r"venv\Lib\site-packages\osgeo_utils"
 ```
