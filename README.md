@@ -1,5 +1,4 @@
-Create vegetation index (NDVI, ARI, etc) geotiffs from hyperspectral images. Uses Python and GDAL. See below for information on installing GDAL in [Windows](#Windows) or [Linux](#Linux). 
-
+Create vegetation index (NDVI, ARI, etc) geotiffs from hyperspectral images. Uses Python along with GDAL and numpy. See below for information on installing GDAL in [Windows](#Windows) or [Linux](#Linux). 
 
 
 ----------
@@ -20,7 +19,7 @@ To calculate a vegetation index for several input files:
 ```
 python calculate_vi_and_merge.py K:\users\joec\06-01-2021\FL* ARI
 ```
-This script uses `gdal_merge.py` to merge the separate output files. The path to `gdal_merge.py` is set within `calculate_vi_and_merge.py`:
+This script uses `gdal_merge.py` to merge the separate output files. The path to `gdal_merge.py` is set within [calculate_vi_and_merge.py](calculate_vi_and_merge.py):
 ```
 PATH_TO_UTILS = r"venv\Lib\site-packages\osgeo_utils"
 ```
@@ -47,7 +46,7 @@ pip install GDAL‑3.3.1‑cp38‑cp38‑win_amd64.whl
 
 Source: https://gis.stackexchange.com/questions/2276/installing-gdal-with-python-on-windows 
 
-## Linux
+### Linux
 
 ```
 sudo apt update
