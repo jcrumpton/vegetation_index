@@ -1,4 +1,4 @@
-Create vegetation index (NDVI, ARI, etc) geotiffs from hyperspectral images. Uses Python along with GDAL and numpy. See below for information on installing GDAL in [Windows](#Windows) or [Linux](#Linux). 
+Create vegetation index (NDVI, ARI, etc.) geotiffs from hyperspectral images. Uses Python along with GDAL and numpy. See below for information on installing GDAL in [Windows](#Windows) or [Linux](#Linux). 
 
 
 ----------
@@ -19,6 +19,9 @@ To calculate a vegetation index for several input files:
 ```
 python calculate_and_merge_vi.py K:\users\joec\06-01-2021\FL* ARI
 ```
+
+The interim output files are saved in the same directory as the output file. The final, merged output file is stored in the same directory as the script unless the `-o` option is used.
+
 This script uses `gdal_merge.py` to merge the separate output files. The path to `gdal_merge.py` is set within [calculate_and_merge_vi.py](calculate_and_merge_vi.py):
 ```
 PATH_TO_UTILS = r"venv\Lib\site-packages\osgeo_utils"
@@ -28,8 +31,31 @@ If you use a Python virtual environment named `venv`, you will not need to chang
 
 ----------
 
-## Adding new indices
+## Adding new Vegetation Indices
 
+New vegetation indices are added in [gri_util/vi_util.py](gri_util/vi_util.py).
+
+1. Add the new index's acronym to the list of valid indices.
+2. Write a function to calculate the vegetation index. The name of the function must be calculate_ _acronym_ (without the space after the underscore). Use `calculate_NDVI` as a template.
+
+```python
+def calculate_NDVI(source_dataset, hdr_dictionary):
+   
+    # fetch bands from input
+    red = data_for_wavelength(source_dataset, hdr_dictionary, 670)
+    nir = data_for_wavelength(source_dataset, hdr_dictionary, 860)
+    
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the red band, don't allow division by zero
+    red = np.ma.masked_where(nir + red == 0, red)  
+
+    # Do the calculation.
+    NDVI = (nir - red) / (nir + red)
+
+    return NDVI
+```
 
 ----------
 
