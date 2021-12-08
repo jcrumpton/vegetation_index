@@ -52,7 +52,18 @@ def read_hdr_file(headername):
     
 
 def hdr_filename_from_base_filename(filename):
+    """Calculates the name of the ESRI hdr file that accompanies a hyperspectral raster file
+    
+    Parameters
+    ----------
+    filename : str
+        name of the raster data file
 
+    Returns
+    -------
+    str
+        name of the hdr file that contains georeferencing information
+    """
     path = pathlib.Path(filename)
     hdr_filename = (path.parent).joinpath(path.stem + '.hdr')
     # print(hdr_filename)
@@ -61,6 +72,7 @@ def hdr_filename_from_base_filename(filename):
 
 
 def wavelengths_as_np_array(header_dictionary):
+    """Returns the wavelengths contained in a hyperspectral raster image as a numpy array"""
     wavelengths_as_strings = header_dictionary["wavelength"]
     wavelengths_as_floats = []
     for each in wavelengths_as_strings:
@@ -69,6 +81,26 @@ def wavelengths_as_np_array(header_dictionary):
 
 
 def closest_wavelength(header_dictionary, target, tolerance=10):
+    """Calculates wavelength available in a hyperspectral raster image closest to the target wavelength
+
+    Throws an exception if there is not a wavelength within a given range of the target wavelength.
+    
+    Parameters
+    ----------
+    header_dictionary : dict
+        parsed information from a hdr file that accompanies a hyperspectral raster data file
+    target : number
+        wavelength being searched for, units (such as nm) are assumed to be the same as the units used
+        in the header_dictionary
+    tolerance : number, optional
+        limit for how close the wavelength found in the header_dictionary should be to the target wavelength
+        to be considered a match
+
+    Returns
+    -------
+    number
+        wavelength in header_dictionary closest to the target wavelength
+    """
     wavelengths = wavelengths_as_np_array(header_dictionary)
     min_index = np.argmin(np.abs(wavelengths - target))
     closest = wavelengths[min_index]
@@ -79,13 +111,25 @@ def closest_wavelength(header_dictionary, target, tolerance=10):
 
 
 def band_for_wavelength(header_dictionary, wavelength):
+    """Returns the band number for the band that contains the data for wavelength"""
     return (header_dictionary["wavelength_dict"])[wavelength]
 
 
 def extract_band(band, dataset):
-    """ 
-    fetch the named band from the hyperspectral file
-    band: integer
+    """Extracts a band and the band's metadata from the GDAL dataset
+    
+    Parameters
+    ----------
+    band : int
+    dataset : GDAL Dataset
+
+    Returns
+    -------
+    numpy array
+        values contained in the named band from the dataset
+    dict
+        wavelength (and wavelength units) of named band
+    
     """
 
     raster_band = dataset.GetRasterBand(band)
@@ -101,6 +145,8 @@ def extract_band(band, dataset):
 
 
 def data_for_wavelength(source_dataset, hdr_dictionary, wavelength):
+    """Returns a numpy array containing the data from a GDAL dataset band whose wavelength is 
+       closest to the specified wavelength"""
     closest_freq = closest_wavelength(hdr_dictionary, wavelength)
     band_number = band_for_wavelength(hdr_dictionary, closest_freq)
     data, _ = extract_band(band_number, source_dataset)
