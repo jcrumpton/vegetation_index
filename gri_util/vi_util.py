@@ -8,7 +8,7 @@ nodata_value = None
 #   1) add acronym to VALID_INDICES
 #   2) write a compute_<acronym> method
 #
-VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NPCI', 
+VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
                  'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 
                  'SR445', 'SR487', 'ARI', 'mARI', 'SAVI']
 
@@ -80,6 +80,57 @@ def calculate_NDVI673(source_dataset, hdr_dictionary):
     NDVI673 = (R750 - R673) / (R750 + R673)
 
     return NDVI673
+
+
+def calculate_NDVI675(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R675 = data_for_wavelength(source_dataset, hdr_dictionary, 675)
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R675 band, don't allow division by zero
+    R675 = np.ma.masked_where(R675 + R750 == 0, R675)
+
+    # Do the calculation.
+    NDVI675 = (R750 - R675) / (R750 + R675)
+
+    return NDVI675
+
+
+def calculate_NDVI680(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 680)
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R680 band, don't allow division by zero
+    R680 = np.ma.masked_where(R680 + R750 == 0, R680)
+
+    # Do the calculation.
+    NDVI680 = (R750 - R680) / (R750 + R680)
+
+    return NDVI680
+
+
+def calculate_NDVI705(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R705 band, don't allow division by zero
+    R705 = np.ma.masked_where(R705 + R750 == 0, R705)
+
+    # Do the calculation.
+    NDVI705 = (R750 - R705) / (R750 + R705)
+
+    return NDVI705
 
 
 def calculate_NPCI(source_dataset, hdr_dictionary):
