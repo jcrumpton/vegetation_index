@@ -286,7 +286,7 @@ def calculate_SR487(source_dataset, hdr_dictionary):
 def calculate_SR680(source_dataset, hdr_dictionary):
     # fetch bands from input
     R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
-    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 676)
+    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 680)
 
     global nodata_value
     nodata_value = -99
