@@ -9,7 +9,7 @@ nodata_value = None
 #   2) write a compute_<acronym> method
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
-                 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 
+                 'PRI', 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 
                  'SR445', 'SR487', 'ARI', 'mARI', 'SAVI']
 
 
@@ -148,6 +148,23 @@ def calculate_NPCI(source_dataset, hdr_dictionary):
     NPCI = (R680 - R430) / (R680 + R430)
 
     return NPCI
+
+
+def calculate_PRI(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R531 = data_for_wavelength(source_dataset, hdr_dictionary, 531)
+    R570 = data_for_wavelength(source_dataset, hdr_dictionary, 570)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R531 band, don't allow division by zero
+    R680 = np.ma.masked_where(R531 + R570 == 0, R531)
+
+    # Do the calculation.
+    PRI = (R531 - R570) / (R531 + R570)
+
+    return PRI
 
 
 def calculate_ND800_700(source_dataset, hdr_dictionary):
