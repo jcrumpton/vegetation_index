@@ -9,7 +9,7 @@ nodata_value = None
 #   2) write a compute_<acronym> method
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
-                 'PRI', 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 
+                 'PRI', 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 'PSSRb', 
                  'SR445', 'SR487', 'ARI', 'mARI', 'SAVI']
 
 
@@ -234,6 +234,23 @@ def calculate_PSSRa(source_dataset, hdr_dictionary):
     PSSRa = R800 / R676
 
     return PSSRa
+
+
+def calculate_PSSRb(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
+    R635 = data_for_wavelength(source_dataset, hdr_dictionary, 635)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R635 band, don't allow division by zero
+    R635 = np.ma.masked_values(R635, 0.0)
+
+    # Do the calculation.
+    PSSRb = R800 / R635
+
+    return PSSRb
 
 
 def calculate_SR445(source_dataset, hdr_dictionary):
