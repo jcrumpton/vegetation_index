@@ -10,7 +10,7 @@ nodata_value = None
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
                  'PRI', 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 'PSSRb', 
-                 'SR445', 'SR487', 'ARI', 'mARI', 'SAVI']
+                 'SR445', 'SR487', 'SR680', 'ARI', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -281,6 +281,23 @@ def calculate_SR487(source_dataset, hdr_dictionary):
     SR487 = R487/R705
 
     return SR487    
+
+
+def calculate_SR680(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
+    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 676)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R680 band, don't allow division by zero
+    R680 = np.ma.masked_values(R680, 0.0)
+
+    # Do the calculation.
+    SR680 = R800 / R680
+
+    return SR680
 
 
 def calculate_ARI(source_dataset, hdr_dictionary):
