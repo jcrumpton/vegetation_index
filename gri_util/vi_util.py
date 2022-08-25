@@ -9,7 +9,7 @@ nodata_value = None
 #   2) write a compute_<acronym> method
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
-                 'PRI', 'ND800_700', 'ND800_680', 'mSR705', 'PSSRa', 'PSSRb', 
+                 'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'mSR705', 'PSSRa', 'PSSRb', 
                  'SR445', 'SR487', 'SR680', 'ARI', 'mARI', 'SAVI']
 
 
@@ -199,6 +199,54 @@ def calculate_ND800_680(source_dataset, hdr_dictionary):
     ND800_680 = (R800 - R680) / (R800 + R680)
 
     return ND800_680
+
+
+def calculate_mNDVI673(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+    R673 = data_for_wavelength(source_dataset, hdr_dictionary, 673)
+    R445 = data_for_wavelength(source_dataset, hdr_dictionary, 445)
+
+    global nodata_value
+    nodata_value = -10000
+
+    # Compute numerator
+    numerator = R750 - R673
+
+    # Compute denominator
+    denominator = R750 + R673 - (2 * R445)
+
+    # Mask the denominator, don't allow division by zero
+    denominator = np.ma.masked_where(denominator == 0, denominator)
+
+    # Do the calculation.
+    mNDVI673 = numerator / denominator
+
+    return mNDVI673
+
+
+def calculate_mND705(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R445 = data_for_wavelength(source_dataset, hdr_dictionary, 445)
+
+    global nodata_value
+    nodata_value = -10000
+
+    # Compute numerator
+    numerator = R750 - R705
+
+    # Compute denominator
+    denominator = R750 + R705 - (2 * R445)
+
+    # Mask the denominator, don't allow division by zero
+    denominator = np.ma.masked_where(denominator == 0, denominator)
+
+    # Do the calculation.
+    mND705 = numerator / denominator
+
+    return mND705
 
 
 def calculate_mSR705(source_dataset, hdr_dictionary):
