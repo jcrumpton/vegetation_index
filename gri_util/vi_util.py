@@ -10,7 +10,7 @@ nodata_value = None
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
                  'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'DD', 'mSR705', 'PSSRa', 'PSSRb', 
-                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'ARI', 'mARI', 'SAVI']
+                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'SIPI', 'DATT', 'ARI', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -192,7 +192,7 @@ def calculate_ND800_680(source_dataset, hdr_dictionary):
     global nodata_value
     nodata_value = -99
 
-    # Mask the R680 band, don't allow division by zero
+    # Mask the R800 band, don't allow division by zero
     R800 = np.ma.masked_where(R800 + R680 == 0, R800)
 
     # Do the calculation.
@@ -396,6 +396,42 @@ def calculate_SR705(source_dataset, hdr_dictionary):
     SR705 = R750 / R705
 
     return SR705
+
+
+def calculate_SIPI(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R445 = data_for_wavelength(source_dataset, hdr_dictionary, 445)
+    R680 = data_for_wavelength(source_dataset, hdr_dictionary, 680)
+    R800 = data_for_wavelength(source_dataset, hdr_dictionary, 800)
+
+    global nodata_value
+    nodata_value = -100000
+
+    # Mask the R800 band, don't allow division by zero
+    R800 = np.ma.masked_where(R800 - R680 == 0, R800)
+
+    # Do the calculation.
+    SIPI = (R800 - R445) / (R800 - R680)
+
+    return SIPI
+
+
+def calculate_DATT(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R550 = data_for_wavelength(source_dataset, hdr_dictionary, 550)
+    R672 = data_for_wavelength(source_dataset, hdr_dictionary, 672)
+    R708 = data_for_wavelength(source_dataset, hdr_dictionary, 708)
+
+    global nodata_value
+    nodata_value = -100000
+
+    # Mask the R708 band, don't allow division by zero
+    R708 = np.ma.masked_where(R708 * R550 == 0, R708)
+
+    # Do the calculation.
+    DATT = R672 / (R708 - R550)
+
+    return DATT
 
 
 def calculate_ARI(source_dataset, hdr_dictionary):
