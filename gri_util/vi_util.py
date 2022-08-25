@@ -9,8 +9,8 @@ nodata_value = None
 #   2) write a compute_<acronym> method
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
-                 'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'mSR705', 'PSSRa', 'PSSRb', 
-                 'SR445', 'SR487', 'SR680', 'ARI', 'mARI', 'SAVI']
+                 'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'DD', 'mSR705', 'PSSRa', 'PSSRb', 
+                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'ARI', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -249,6 +249,22 @@ def calculate_mND705(source_dataset, hdr_dictionary):
     return mND705
 
 
+def calculate_DD(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R749 = data_for_wavelength(source_dataset, hdr_dictionary, 749)
+    R720 = data_for_wavelength(source_dataset, hdr_dictionary, 720)
+    R701 = data_for_wavelength(source_dataset, hdr_dictionary, 701)
+    R672 = data_for_wavelength(source_dataset, hdr_dictionary, 672)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Do the calculation.
+    DD = (R749 - R720) - (R701 - R672)
+
+    return DD
+
+
 def calculate_mSR705(source_dataset, hdr_dictionary):
     # fetch bands from input
     R445 = data_for_wavelength(source_dataset, hdr_dictionary, 445)
@@ -346,6 +362,40 @@ def calculate_SR680(source_dataset, hdr_dictionary):
     SR680 = R800 / R680
 
     return SR680
+
+
+def calculate_SR700(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R675 = data_for_wavelength(source_dataset, hdr_dictionary, 675)
+    R700 = data_for_wavelength(source_dataset, hdr_dictionary, 700)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R700 band, don't allow division by zero
+    R700 = np.ma.masked_values(R700, 0.0)
+
+    # Do the calculation.
+    SR700 = R675 / R700
+
+    return SR700
+
+
+def calculate_SR705(source_dataset, hdr_dictionary):
+    # fetch bands from input
+    R750 = data_for_wavelength(source_dataset, hdr_dictionary, 750)
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Mask the R705 band, don't allow division by zero
+    R705 = np.ma.masked_values(R705, 0.0)
+
+    # Do the calculation.
+    SR705 = R750 / R705
+
+    return SR705
 
 
 def calculate_ARI(source_dataset, hdr_dictionary):
