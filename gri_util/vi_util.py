@@ -10,7 +10,8 @@ nodata_value = None
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
                  'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'DD', 'mSR705', 'PSSRa', 'PSSRb', 
-                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'SIPI', 'DATT', 'ARI', 'mARI', 'SAVI']
+                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'SIPI', 'DATT', 'CRI_red_edge', 
+                 'ARI', 'BGBO', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -434,20 +435,59 @@ def calculate_DATT(source_dataset, hdr_dictionary):
     return DATT
 
 
-def calculate_ARI(source_dataset, hdr_dictionary):
+def calculate_CRI_red_edge(source_dataset, hdr_dictionary):
     
-    R550 = data_for_wavelength(source_dataset, hdr_dictionary, 550)
-    R550 = np.ma.masked_values(R550, 0.0)
+    R510 = data_for_wavelength(source_dataset, hdr_dictionary, 510)
+    R510 = np.ma.masked_values(R510, 0.0)
 
-    R700 = data_for_wavelength(source_dataset, hdr_dictionary, 700)
-    R700 = np.ma.masked_values(R700, 0.0)
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R705 = np.ma.masked_values(R705, 0.0)
+
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775)
 
     global nodata_value
-    nodata_value = -10000
+    nodata_value = -99
 
-    ARI = (1/R550) - (1/R700)
+    CRI_red_edge = ((1 / R510) - (1 / R705) * R775)
+
+    return CRI_red_edge
+
+
+def calculate_ARI(source_dataset, hdr_dictionary):
+    
+    R560 = data_for_wavelength(source_dataset, hdr_dictionary, 560)
+    R560 = np.ma.masked_values(R560, 0.0)
+
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R705 = np.ma.masked_values(R705, 0.0)
+
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775)
+
+    global nodata_value
+    nodata_value = -99
+
+    ARI = ((1 / R560) - (1 / R705) * R775)
 
     return ARI
+
+
+def calculate_BGBO(source_dataset, hdr_dictionary):
+    
+    R495 = data_for_wavelength(source_dataset, hdr_dictionary, 495)
+
+    R554 = data_for_wavelength(source_dataset, hdr_dictionary, 554)
+    R554 = np.ma.masked_values(R554, 0.0)
+
+    R635 = data_for_wavelength(source_dataset, hdr_dictionary, 635)
+    R635 = np.ma.masked_values(R635, 0.0)
+
+    global nodata_value
+    nodata_value = -99
+
+    # Do the calculation.
+    BGBO = (R495 / R554) - (R495 / R635)
+
+    return BGBO
 
 
 def calculate_mARI(source_dataset, hdr_dictionary):
