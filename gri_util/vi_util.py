@@ -440,10 +440,10 @@ def calculate_CRI_red_edge(source_dataset, hdr_dictionary):
     R510 = data_for_wavelength(source_dataset, hdr_dictionary, 510)
     R510 = np.ma.masked_values(R510, 0.0)
 
-    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705, tolerance=5)  # wavelength: 700 - 710
     R705 = np.ma.masked_values(R705, 0.0)
 
-    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775)
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775, tolerance=25)  # wavelength: 750 - 800
 
     global nodata_value
     nodata_value = -99
@@ -455,13 +455,13 @@ def calculate_CRI_red_edge(source_dataset, hdr_dictionary):
 
 def calculate_ARI(source_dataset, hdr_dictionary):
     
-    R560 = data_for_wavelength(source_dataset, hdr_dictionary, 560)
+    R560 = data_for_wavelength(source_dataset, hdr_dictionary, 560, tolerance=10)  # wavelength: 550 - 570
     R560 = np.ma.masked_values(R560, 0.0)
 
-    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705)
+    R705 = data_for_wavelength(source_dataset, hdr_dictionary, 705, tolerance=5)  # wavelength: 700 - 710
     R705 = np.ma.masked_values(R705, 0.0)
 
-    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775)
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775, tolerance=25)  # wavelength: 750 - 800
 
     global nodata_value
     nodata_value = -99

@@ -80,7 +80,7 @@ def wavelengths_as_np_array(header_dictionary):
     return np.array(wavelengths_as_floats)
 
 
-def closest_wavelength(header_dictionary, target, tolerance=10):
+def closest_wavelength(header_dictionary, target, tolerance=2):
     """Calculates wavelength available in a hyperspectral raster image closest to the target wavelength
 
     Throws an exception if there is not a wavelength within a given range of the target wavelength.
@@ -144,10 +144,10 @@ def extract_band(band, dataset):
     return data, new_metadata
 
 
-def data_for_wavelength(source_dataset, hdr_dictionary, wavelength):
+def data_for_wavelength(source_dataset, hdr_dictionary, wavelength, tolerance=2):
     """Returns a numpy array containing the data from a GDAL dataset band whose wavelength is 
        closest to the specified wavelength"""
-    closest_freq = closest_wavelength(hdr_dictionary, wavelength)
+    closest_freq = closest_wavelength(hdr_dictionary, wavelength, tolerance)
     band_number = band_for_wavelength(hdr_dictionary, closest_freq)
     data, _ = extract_band(band_number, source_dataset)
 
