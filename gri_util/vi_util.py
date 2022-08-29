@@ -9,9 +9,9 @@ nodata_value = None
 #   2) write a compute_<acronym> method
 #
 VALID_INDICES = ['NDVI', 'gNDVI', 'NDVI650', 'NDVI673', 'NDVI675', 'NDVI680', 'NDVI705', 'NPCI', 
-                 'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'DD', 'mSR705', 'PSSRa', 'PSSRb', 
-                 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'SIPI', 'DATT', 'CRI_red_edge', 
-                 'ARI', 'BGBO', 'mARI', 'SAVI']
+                 'PRI', 'ND800_700', 'ND800_680', 'mNDVI673', 'mND705', 'DD', 'mSR705', 'PSSRa', 
+                 'PSSRb', 'SR445', 'SR487', 'SR680', 'SR700', 'SR705', 'SIPI', 'DATT', 'ChlRI_green', 
+                 'ChlRI_red_green', 'CRI_green', 'CRI_red_edge', 'ARI', 'BGBO', 'mARI', 'SAVI']
 
 
 def calculate_NDVI(source_dataset, hdr_dictionary):
@@ -433,6 +433,60 @@ def calculate_DATT(source_dataset, hdr_dictionary):
     DATT = R672 / (R708 - R550)
 
     return DATT
+
+
+def calculate_ChlRI_green(source_dataset, hdr_dictionary):
+    
+    R450 = data_for_wavelength(source_dataset, hdr_dictionary, 450, tolerance=20)  # wavelength: 430 - 470
+    R460 = data_for_wavelength(source_dataset, hdr_dictionary, 460, tolerance=20)  # wavelength: 440 - 480
+    R550 = data_for_wavelength(source_dataset, hdr_dictionary, 550, tolerance=30)  # wavelength: 520 - 580
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775, tolerance=25)  # wavelength: 750 - 800
+
+    global nodata_value
+    nodata_value = -100000
+
+    # Mask the R460 band, don't allow division by zero
+    R460 = np.ma.masked_where((R550 - R460) == 0, R460)
+
+    ChlRI_green = ((R775 - R450) / (R550 - R460)) - 1
+
+    return ChlRI_green
+
+
+def calculate_ChlRI_red_green(source_dataset, hdr_dictionary):
+    
+    R450 = data_for_wavelength(source_dataset, hdr_dictionary, 450, tolerance=20)  # wavelength: 430 - 470
+    R460 = data_for_wavelength(source_dataset, hdr_dictionary, 460, tolerance=20)  # wavelength: 440 - 480
+    R717_5 = data_for_wavelength(source_dataset, hdr_dictionary, 717.5, tolerance=22.5)  # wavelength: 695 - 740
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775, tolerance=25)  # wavelength: 750 - 800
+
+    global nodata_value
+    nodata_value = -10000
+
+    # Mask the R460 band, don't allow division by zero
+    R460 = np.ma.masked_where((R717_5 - R460) == 0, R460)
+
+    ChlRI_red_green = ((R775 - R450) / (R717_5 - R460)) - 1
+
+    return ChlRI_red_green
+
+
+def calculate_CRI_green(source_dataset, hdr_dictionary):
+    
+    R510 = data_for_wavelength(source_dataset, hdr_dictionary, 510)
+    R510 = np.ma.masked_values(R510, 0.0)
+
+    R560 = data_for_wavelength(source_dataset, hdr_dictionary, 560, tolerance=10)  # wavelength: 550 - 570
+    R560 = np.ma.masked_values(R560, 0.0)
+
+    R775 = data_for_wavelength(source_dataset, hdr_dictionary, 775, tolerance=25)  # wavelength: 750 - 800
+
+    global nodata_value
+    nodata_value = -99
+
+    CRI_green = ((1 / R510) - (1 / R560) * R775)
+
+    return CRI_green
 
 
 def calculate_CRI_red_edge(source_dataset, hdr_dictionary):
